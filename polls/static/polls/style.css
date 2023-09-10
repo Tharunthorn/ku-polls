@@ -1,7 +1,70 @@
-li a {
-    color: green;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
 }
 
-body {
-    background: white url("images/background.jpg") no-repeat;
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: #fff;
+    margin: 8px 0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+}
+
+.status-label {
+    font-size: 14px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.published {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.not-published {
+    background-color: #f44336;
+    color: white;
+}
+
+.voting-open {
+    background-color: #2196F3;
+    color: white;
+}
+
+.voting-closed {
+    background-color: #FF9800;
+    color: white;
+}
+
+.end-date {
+    float: right;
+    font-size: 14px;
+    color: #777;
 }

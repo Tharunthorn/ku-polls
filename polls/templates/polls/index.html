@@ -1,11 +1,86 @@
-{% load static %}
-<link rel="stylesheet" href="{% static 'polls/style.css' %}">
-{% if latest_question_list %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Polls</title>
+    <style>
+        /* Reset some default browser styles */
+        body, h1, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Add a background color and some padding around the whole page */
+        body {
+            background-color: #f1f1f1;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Style the header */
+        h1 {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Style the list */
+        ul {
+            list-style-type: none;
+        }
+
+        /* Style each list item */
+        ul li {
+            background-color: #fff;
+            margin: 8px 0;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        /* Add some hover effects */
+        ul li:hover {
+            background-color: #f9f9f9;
+            box-shadow: 0 0 11px rgba(33,33,33,.2);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Latest Polls</h1>
+
+    {% if latest_question_list %}
     <ul>
-    {% for question in latest_question_list %}
-        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
+        {% for question in latest_question_list %}
+        <li>
+            <a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a>
+            <br>
+            {% if question.is_published %}
+            <span style="color: green;">Published</span>
+            {% else %}
+            <span style="color: red;">Not Published</span>
+            {% endif %}
+
+            {% if question.can_vote %}
+            <span style="color: blue;">Voting Open</span>
+            {% else %}
+            <span style="color: orange;">Voting Closed</span>
+            {% endif %}
+
+            {% if question.end_date %}
+            <span>Ends on: {{ question.end_date|date:"D, d M Y" }}</span>
+            {% else %}
+            <span>Ends on: N/A</span>
+            {% endif %}
+        </li>
+        {% endfor %}
     </ul>
-{% else %}
+    {% else %}
     <p>No polls are available.</p>
-{% endif %}
+    {% endif %}
+
+</body>
+</html>
