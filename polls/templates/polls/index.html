@@ -56,7 +56,11 @@
     <ul>
         {% for question in latest_question_list %}
         <li>
+            {% if question.can_vote%}
             <a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a>
+            {% else %}
+            <p>{{ question.question_text }}</p>
+            {% endif %}
             <br>
             {% if question.is_published %}
             <span style="color: green;">Published</span>
@@ -81,6 +85,11 @@
     {% else %}
     <p>No polls are available.</p>
     {% endif %}
-
+{% for question in latest_question_list %}
+    <li>
+        <a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a>
+        <a href="{% url 'polls:results' question.id %}">Results</a>
+    </li>
+{% endfor %}
 </body>
 </html>

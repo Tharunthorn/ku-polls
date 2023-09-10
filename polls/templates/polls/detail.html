@@ -1,6 +1,7 @@
 <form action="{% url 'polls:vote' question.id %}" method="post">
 {% csrf_token %}
 <fieldset>
+    <a href="{% url 'polls:results' question.id %}">Results</a>
     <legend><h1>{{ question.question_text }}</h1></legend>
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     {% for choice in question.choice_set.all %}
@@ -9,4 +10,5 @@
     {% endfor %}
 </fieldset>
 <input type="submit" value="Vote">
+<a href="{% url 'polls:index' %}">Back to List of Polls</a>
 </form>

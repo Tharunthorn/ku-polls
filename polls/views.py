@@ -9,6 +9,9 @@ from .models import Question, Choice
 
 
 class IndexView(generic.ListView):
+    """
+    Displays the index page listing all questions.
+    """
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
 

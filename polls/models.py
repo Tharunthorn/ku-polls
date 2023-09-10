@@ -6,6 +6,9 @@ from django.contrib import admin
 
 
 class Question(models.Model):
+    """
+    Represents a single poll question.
+    """
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
     end_date = models.DateTimeField('end date', null=True, blank=True)
@@ -27,6 +30,9 @@ class Question(models.Model):
         return self.question_text
 
     def is_published(self):
+        """
+        Determines if the question is published.
+        """
         return timezone.now() >= self.pub_date
 
     def can_vote(self):
