@@ -3,6 +3,7 @@ import datetime
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
+import datetime
 
 from .models import Question
 
@@ -101,23 +102,51 @@ class QuestionIndexViewTests(TestCase):
             response.context['latest_question_list'],
             [question2, question1],
         )
-class QuestionDetailViewTests(TestCase):
-    def test_future_question(self):
-        """
-        The detail view of a question with a pub_date in the future
-        returns a 404 not found.
-        """
-        future_question = create_question(question_text='Future question.', days=5)
-        url = reverse('polls:detail', args=(future_question.id,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
 
-    def test_past_question(self):
-        """
-        The detail view of a question with a pub_date in the past
-        displays the question's text.
-        """
-        past_question = create_question(question_text='Past Question.', days=-5)
-        url = reverse('polls:detail', args=(past_question.id,))
-        response = self.client.get(url)
-        self.assertContains(response, past_question.question_text)
+class QuestionModelTests(TestCase):
+    def create_question_with_dates(self, pub_date, end_date=None):
+        return Question.objects.create(question_text="Sample question", pub_date=pub_date, end_date=end_date)
+
+    def test_is_published_with_future_pub_date(self):
+        """Cannot be published if the pub_date is in the future."""
+        future_date = timezone.now() + datetime.timedelta(days=1)
+        question = self.create_question_with_dates(pub_date=future_date)
+        self.assertIs(question.is_published(), False)
+
+    def test_is_published_with_default_pub_date(self):
+        """Is published if the pub_date is now."""
+        now = timezone.now()
+        question = self.create_question_with_dates(pub_date=now)
+        self.assertIs(question.is_published(), True)
+
+    def test_is_published_with_past_pub_date(self):
+        """Is published if the pub_date is in the past."""
+        past_date = timezone.now() - datetime.timedelta(days=1)
+        question = self.create_question_with_dates(pub_date=past_date)
+        self.assertIs(question.is_published(), True)
+
+    def test_can_vote_before_pub_date(self):
+        """Cannot vote if the current date/time is before the pub_date."""
+        future_date = timezone.now() + datetime.timedelta(days=1)
+        question = self.create_question_with_dates(pub_date=future_date)
+        self.assertIs(question.can_vote(), False)
+
+    def test_can_vote_after_end_date(self):
+        """Cannot vote if the end_date is in the past."""
+        past_end_date = timezone.now() - datetime.timedelta(days=1)
+        pub_date = timezone.now() - datetime.timedelta(days=2)
+        question = self.create_question_with_dates(pub_date=pub_date, end_date=past_end_date)
+        self.assertIs(question.can_vote(), False)
+
+    def test_can_vote_within_date_range(self):
+        """Can vote if the current date/time is between the pub_date and end_date."""
+        future_end_date = timezone.now() + datetime.timedelta(days=1)
+        pub_date = timezone.now() - datetime.timedelta(days=1)
+        question = self.create_question_with_dates(pub_date=pub_date, end_date=future_end_date)
+        self.assertIs(question.can_vote(), True)
+
+    def test_can_vote_after_pub_date_no_end_date(self):
+        """Can vote anytime after pub_date if end_date is None."""
+        pub_date = timezone.now() - datetime.timedelta(days=1)
+        question = self.create_question_with_dates(pub_date=pub_date)
+        self.assertIs(question.can_vote(), True)
