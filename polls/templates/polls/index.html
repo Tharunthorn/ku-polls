@@ -1,11 +1,104 @@
-{% load static %}
-<link rel="stylesheet" href="{% static 'polls/style.css' %}">
-{% if latest_question_list %}
-    <ul>
-    {% for question in latest_question_list %}
-        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Polls</title>
+    <style>
+       body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #4a90e2;
+            text-align: center;
+            margin-top: 4rem;
+            margin-bottom: 2rem;
+            font-size: 2.5em;
+        }
+
+        .polls-container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .poll-card {
+            padding: 1.5rem;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            clip-path: polygon(2% 0%, 100% 0%, 98% 100%, 0% 100%);
+            transition: all .3s ease;
+        }
+
+        .poll-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .poll-title {
+            font-size: 1.4em;
+            margin-bottom: 1rem;
+            color: #333333;
+        }
+
+        .poll-info {
+            font-size: 1em;
+            color: #7a7a7a;
+        }
+
+        .status, .end-date, .results-link {
+            display: inline-block;
+            padding: 0.5em 1em;
+            margin-right: 1rem;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .published { background: #2ecc71; }
+        .not-published { background: #e74c3c; }
+        .voting-open { background: #3498db; }
+        .voting-closed { background: #f39c12; }
+        .end-date { background: #95a5a6; }
+        .results-link { background: #9b59b6; color: #fff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>Latest Polls</h1>
+    <div class="polls-container">
+        {% if latest_question_list %}
+            {% for question in latest_question_list %}
+                <div class="poll-card">
+                    <h2 class="poll-title">
+                        {% if question.can_vote %}
+                            <a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a>
+                        {% else %}
+                            {{ question.question_text }}
+                        {% endif %}
+                    </h2>
+                    <div class="poll-info">
+                        <span class="status {% if question.is_published %}published{% else %}not-published{% endif %}">
+                            {% if question.is_published %}Published{% else %}Not Published{% endif %}
+                        </span>
+                        <span class="status {% if question.can_vote %}voting-open{% else %}voting-closed{% endif %}">
+                            {% if question.can_vote %}Voting Open{% else %}Voting Closed{% endif %}
+                        </span>
+                        <span class="end-date">
+                            Ends on: {% if question.end_date %}{{ question.end_date|date:"D, d M Y" }}{% else %}N/A{% endif %}
+                        </span>
+                        <a href="{% url 'polls:results' question.id %}" class="results-link">Results</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; font-size: 1.2em; color: #e74c3c;">No polls are available.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
