@@ -108,4 +108,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/polls/'    # after login, show list of polls
-LOGOUT_REDIRECT_URL = '?'         # after logout, direct to where?
+LOGOUT_REDIRECT_URL = '/polls/'         # after logout, direct to where?

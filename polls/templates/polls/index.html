@@ -70,6 +70,12 @@
     </style>
 </head>
 <body>
+    {% if user.is_authenticated %}
+   Welcome back, {{ user.username }}
+        <a href="/accounts/logout">logout</a>
+{% else %}
+   Please <a href="{% url 'login' %}?next={{request.path}}">Login</a>
+{% endif %}
     <h1>Latest Polls</h1>
     <div class="polls-container">
         {% if latest_question_list %}
